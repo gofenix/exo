@@ -39,6 +39,6 @@ func main() {
 	)
 
 	fmt.Println(
-		gnum.Uniq([]int{1, 2, 3, 4, 1, 1}),
+		gnum.Uniq([]int{1, 2, 2, 3, 4, 1, 1}),
 	)
 }

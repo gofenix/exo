@@ -88,14 +88,14 @@ func Sort2() {
 
 func Uniq[T comparable](list []T) []T {
 	a := map[T]byte{}
+	var result []T
 
 	for _, v := range list {
+		if _, flag := a[v]; flag {
+			continue
+		}
 		a[v] = 0
-	}
-
-	var result []T
-	for k := range a {
-		result = append(result, k)
+		result = append(result, v)
 	}
 
 	return result
