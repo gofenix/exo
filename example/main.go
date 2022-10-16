@@ -22,10 +22,7 @@ func main() {
 	fmt.Println(m)
 
 	fmt.Println(gnum.Filter(l, func(x string) bool {
-		if x == "a" {
-			return true
-		}
-		return false
+		return x == "a"
 	}))
 
 	fmt.Println(

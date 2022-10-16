@@ -1,30 +1,31 @@
 # gnum
 
-A Elixir Enum port in Go
+A Elixir Enum port in Go.
 
 # WIP
 
-- [ ] All(enumerable)
-- [ ] AllBy(enumerable, fun)
-- [ ] Any(enumerable)
-- [ ] AnyBy(enumerable, fun)
-- [ ] At(enumerable, index)
+- [x] All(enumerable)
+- [x] AllBy(enumerable, fun)
+- [x] Any(enumerable)
+- [x] AnyBy(enumerable, fun)
+- [x] At(enumerable, index)
+- [x] AtOrElse(enumerable, index, default)
 - [ ] ChunkBy(enumerable, fun)
 - [ ] ChunkEvery
 - [ ] ChunkWhile
-- [ ] Concat
-- [ ] Count
-- [ ] CountBy(enumerable, fun)
-- [ ] CountUntil(enumerable, limit)
-- [ ] CountUntilBy(enumerable, fun, limit)
+- [x] Concat
+- [x] Count
+- [x] CountBy(enumerable, fun)
+- [x] CountUntil(enumerable, limit)
+- [x] CountUntilBy(enumerable, fun, limit)
 - [ ] Dedup(enumerable)
 - [ ] DedupBy(enumerable, fun)
 - [ ] Drop(enumerable, amount)
 - [ ] DropEvery(enumerable, nth)
 - [ ] DropWhile(enumerable, fun)
 - [x] Each(enumerable, fun)
-- [ ] Empty(enumerable)
-- [ ] Fetch(enumerable, index)
+- [x] Empty(enumerable)
+- [x] Fetch(enumerable, index)
 - [x] Filter(enumerable, fun)
 - [ ] Find(enumerable, fun)
 - [ ] FindIndex(enumerable, fun)
@@ -85,15 +86,3 @@ A Elixir Enum port in Go
 - [ ] ZipReduceRange(left, right, acc, reducer)
 - [ ] ZipWith(enumerables, zip_fun)
 - [ ] ZipWith2(enumerable1, enumerable2, zip_fun)
-
-
-
-
-
-
-
-
-
-
-
-
