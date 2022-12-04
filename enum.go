@@ -1,39 +1,26 @@
 package gnum
 
 import (
-	"errors"
 	"math"
+	"sort"
 
 	"golang.org/x/exp/constraints"
 )
 
 func All[T any](list []T) bool {
-	return true
+	panic("All not ready!")
 }
 
 func AllBy[T any](list []T, fn func(T) bool) bool {
-	for _, v := range list {
-		if fn(v) {
-			continue
-		} else {
-			return false
-		}
-	}
-	return true
+	panic("AllBy not ready!")
 }
 
 func Any[T any](list []T) bool {
-	return true
+	panic("Any not ready!")
 }
 
 func AnyBy[T any](list []T, fn func(T) bool) bool {
-	for _, v := range list {
-		if fn(v) {
-			return true
-		}
-		continue
-	}
-	return true
+	panic("AnyBy not ready!")
 }
 
 func At[T any](list []T, index int) T {
@@ -43,23 +30,43 @@ func At[T any](list []T, index int) T {
 	return list[index]
 }
 
-func AtOrElse[T any](list []T, index int, byDefault T) T {
-	if int(math.Abs(float64(index))) >= len(list) {
-		return byDefault
+func Chunk[T any](list []T, size int) [][]T {
+	if size <= 0 {
+		panic("Second parameter must be greater than 0")
 	}
-	return list[index]
+
+	chunksNum := len(list) / size
+	if len(list)%size != 0 {
+		chunksNum += 1
+	}
+
+	result := make([][]T, 0, chunksNum)
+	for i := 0; i < chunksNum; i++ {
+		last := (i + 1) * size
+		if last > len(list) {
+			last = len(list)
+		}
+		result = append(result, list[i*size:last])
+	}
+
+	return result
 }
 
-func ChunkBy[T any](list []T, fn func(T) bool) T {
-	panic("not ")
-}
+func ChunkBy[T any](list []T, fn func(T) bool) [][]T {
+	needSplit := func(prev T, current T) bool {
+		return fn(prev) != fn(current)
+	}
 
-func ChunEvery[T any](list []T, fn func(T) bool) T {
-	panic("not ")
-}
-
-func ChunkWhile[T any](list []T, fn func(T) bool) T {
-	panic("not ")
+	result := make([][]T, 0)
+	for i := 1; i < len(list); i++ {
+		prev, current := list[i-1], list[i]
+		if needSplit(prev, current) {
+			result = append(result, []T{current})
+		} else {
+			result[len(result)-1] = append(result[len(result)-1], current)
+		}
+	}
+	return result
 }
 
 func Concat[T any](list1 []T, list2 []T) []T {
@@ -106,28 +113,38 @@ func CountUntilBy[T any](list []T, limit int, fn func(T) bool) int {
 	return cnt
 }
 
-func Dedup() {
-	panic("not ")
+func Dedup[T comparable](list []T) []T {
+	result := make([]T, 0)
+	result = append(result, list[0])
+	for i := 1; i < len(list); i++ {
+		prev, current := list[i-1], list[i]
+		if prev != current {
+			result = append(result, current)
+		}
+	}
+	return result
 }
 
-func DedupBy() {
-	panic("not ")
+func DedupBy[T any](list []T, fn func(T) bool) []T {
+	result := make([]T, 0)
+	if fn(list[0]) {
+		result = append(result, list[0])
+	}
+	for i := 1; i < len(list); i++ {
+		prev, current := list[i-1], list[i]
+		if fn(prev) != fn(current) {
+			result = append(result, current)
+		}
+	}
+	return result
+
 }
 
 func Drop[T any](list []T, amount int) []T {
 	if amount < len(list) {
 		return list[amount:]
-
 	}
 	return []T{}
-}
-
-func DropEvery() {
-	panic("not ")
-}
-
-func DropWhile() {
-	panic("not ")
 }
 
 func Each[T any](list []T, fn func(T)) {
@@ -140,17 +157,22 @@ func Empty[T any](list []T) bool {
 	return len(list) == 0
 }
 
-func Fetch[T any](list []T, index int) (T, error) {
+func Fetch[T any](list []T, index int) (T, bool) {
 	if int(math.Abs(float64(index))) >= len(list) {
-		// todo default value should not list[0]
-		return list[0], errors.New(":error")
+		return list[0], false
 	}
 
-	return list[index], nil
+	return list[index], true
 }
 
-func Find[T any](list []T) {
+func Find[T any](list []T, fn func(T) bool) (T, bool) {
+	for _, v := range list {
+		if fn(v) {
+			return v, true
+		}
+	}
 
+	return list[0], false
 }
 
 func Map[T, V any](list []T, fn func(T) V) []V {
@@ -205,29 +227,51 @@ func Reduce[T, V any](list []T, initValue V, fn func(x T, acc V) V) V {
 	return acc
 }
 
-func Sort() {
-
-}
-
-func Sort2() {
-	panic("unimplemented")
+func Sort[T constraints.Ordered](list []T, orderType string) []T {
+	listClone := make([]T, 0)
+	listClone = append(listClone, list...)
+	sort.Slice(listClone, func(i, j int) bool {
+		if orderType == "asc" {
+			return list[i] < list[j]
+		} else if orderType == "desc" {
+			return list[i] >= list[j]
+		} else {
+			panic("Second parameter must be asc or desc")
+		}
+	})
+	return listClone
 }
 
 func Uniq[T comparable](list []T) []T {
-	a := map[T]byte{}
-	var result []T
+	result := make([]T, 0, len(list))
+	seen := make(map[T]struct{}, len(list))
 
-	for _, v := range list {
-		if _, flag := a[v]; flag {
+	for _, item := range list {
+		if _, ok := seen[item]; ok {
 			continue
 		}
-		a[v] = 0
-		result = append(result, v)
+
+		seen[item] = struct{}{}
+		result = append(result, item)
 	}
 
 	return result
 }
 
-func Uniq_by() {
-	panic("unimplemented")
+func UniqBy[T any, U comparable](list []T, fn func(T) U) []T {
+	result := make([]T, 0, len(list))
+	seen := make(map[U]struct{}, len(list))
+
+	for _, item := range list {
+		key := fn(item)
+
+		if _, ok := seen[key]; ok {
+			continue
+		}
+
+		seen[key] = struct{}{}
+		result = append(result, item)
+	}
+
+	return result
 }
