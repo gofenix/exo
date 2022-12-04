@@ -1,4 +1,4 @@
-package gnum
+package enum
 
 import (
 	"math"
